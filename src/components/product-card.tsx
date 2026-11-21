@@ -10,6 +10,13 @@ import { money, unitLabel } from '@/lib/format';
 import type { ProductView } from '@/lib/ui-types';
 import { CategoryArt } from './category-art';
 
+/** Foto del producto si existe; si no, la ilustración por categoría. */
+export function ProductImage({ product, className }: { product: Pick<ProductView, 'name' | 'category' | 'imageUrl'>; className?: string }) {
+  if (!product.imageUrl) return <CategoryArt category={product.category} className={className} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={product.imageUrl} alt={product.name} loading="lazy" className={`${className ?? ''} object-cover`} />;
+}
+
 export function PriceBlock({ p }: { p: Pick<ProductView, 'priceRetail' | 'priceWholesale' | 'wholesaleMinQty' | 'unit'> }) {
   return (
     <div>
@@ -41,7 +48,7 @@ export function ProductCard({ product: p, onAdd, onDetail }: Props) {
   return (
     <Card className="flex flex-col overflow-hidden">
       <button type="button" onClick={() => onDetail(p)} className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={`Ver detalle de ${p.name}`}>
-        <CategoryArt category={p.category} className="h-28 w-full" />
+        <ProductImage product={p} className="h-40 w-full" />
       </button>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="space-y-1">
