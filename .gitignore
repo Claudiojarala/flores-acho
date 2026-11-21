@@ -1,0 +1,17 @@
+# dependencias y build
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# secretos: NUNCA se suben al repositorio
+.env
+.env.*
+!.env.example
+
+# varios
+.DS_Store
+.vercel/
+npm-debug.log*
