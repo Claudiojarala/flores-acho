@@ -116,8 +116,8 @@ push/PR a test|main ─► SAST+Lint+Typecheck ─┐
 ## Despliegue (Vercel + Supabase)
 
 1. **Supabase:** crear proyecto → SQL Editor → ejecutar `db/schema.sql`. Copiar la cadena *Transaction pooler*
-   (Project Settings → Database) como `DATABASE_URL` y, si se requiere, el certificado CA como `DATABASE_CA` (texto PEM).
-2. **Vercel:** importar el repo de GitHub → variables de entorno `JWT_SECRET` (≥ 32 caracteres), `DATABASE_URL`, `DATABASE_CA`.
+   (Project Settings → Database) como `DATABASE_URL`. Para TLS: el certificado CA como `DATABASE_CA` (texto PEM, recomendado) o, si no, `DATABASE_SSL_NO_VERIFY=true` (cifra pero no verifica el certificado).
+2. **Vercel:** importar el repo de GitHub → variables de entorno `JWT_SECRET` (≥ 32 caracteres), `DATABASE_URL` y `DATABASE_CA` o `DATABASE_SSL_NO_VERIFY`.
    Cada push a `main` despliega a producción.
 3. *(Opcional)* deploy desde Actions: secretos `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 
