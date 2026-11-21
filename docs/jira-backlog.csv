@@ -1,0 +1,174 @@
+﻿Issue Id,Issue Type,Summary,Description,Priority,Story point estimate,Parent,Labels,Labels
+1,Epic,Catálogo digital de flores,"Publicar en línea los puestos y productos del mercado, con búsqueda y filtros por tipo, ocasión y precio.
+
+Objetivo de negocio: Dar presencia digital a los comerciantes y que los clientes encuentren qué comprar sin ir a Acho.",High,,,,
+2,Epic,Carrito y pedidos en línea,"Permitir armar un carrito con productos de varios puestos, aplicar precio mayorista y confirmar el pedido validando el stock.
+
+Objetivo de negocio: Captar las ventas de clientes que hoy no pueden acudir al mercado y reducir pedidos fallidos por falta de stock.",High,,,,
+3,Epic,Pagos digitales,"Cobrar con Yape, Plin, tarjeta o contra entrega mediante una pasarela desacoplada (simulada en esta entrega).
+
+Objetivo de negocio: Eliminar la dependencia del efectivo y habilitar la compra a distancia.",High,,,,
+4,Epic,Recojo y delivery,"Ofrecer recojo en el mercado o delivery por distrito con tarifa y seguimiento del estado del pedido.
+
+Objetivo de negocio: Llegar a clientes de otros distritos y reducir llamadas de ""¿dónde está mi pedido?"".",High,,,,
+5,Epic,Panel del comerciante,"Dar a cada comerciante un panel para publicar productos, actualizar precio y stock, atender pedidos y ver sus ventas.
+
+Objetivo de negocio: Que los comerciantes gestionen su negocio en línea sin conocimientos técnicos, sobre todo en fechas pico.",High,,,,
+6,Epic,Cuentas y seguridad,"Registro e inicio de sesión con roles (cliente/comerciante), control de acceso y protección contra abuso.
+
+Objetivo de negocio: Generar confianza y proteger los datos de clientes y comerciantes.",High,,,,
+7,Story,HU-01 Ver el catálogo de flores,"Como cliente, quiero ver el catálogo de productos con precio y disponibilidad, para decidir qué comprar sin ir al mercado.
+
+Criterios de aceptación:
+Criterio 1: Dado que que entro al sitio sin iniciar sesión, cuando abro el Catálogo, entonces veo las flores con puesto, precio y estado de stock.
+
+Prioridad MoSCoW: Must. Sprint planificado: 1.",Highest,3,1,MoSCoW-Must,Sprint-1
+8,Story,HU-02 Buscar y filtrar productos,"Como cliente, quiero buscar por texto y filtrar por tipo, ocasión, puesto, precio y stock, para encontrar rápido lo que necesito.
+
+Criterios de aceptación:
+Criterio 1: Dado que que existen rosas y coronas en el catálogo, cuando filtro por tipo ""Rosas"", entonces solo veo rosas.
+Criterio 2: Dado que que escribo ""orquidea"" sin tilde, cuando busco, entonces aparece la Orquídea phalaenopsis.
+
+Prioridad MoSCoW: Must. Sprint planificado: 2.",Highest,5,1,MoSCoW-Must,Sprint-2
+9,Story,HU-03 Ver el detalle de un producto,"Como cliente, quiero ver el detalle con precio minorista y mayorista, para comparar y decidir la cantidad.
+
+Criterios de aceptación:
+Criterio 1: Dado que que elijo un producto, cuando abro su detalle, entonces veo descripción, ocasiones, precio minorista, precio mayorista y cantidad mínima.
+
+Prioridad MoSCoW: Must. Sprint planificado: 1.",Highest,3,1,MoSCoW-Must,Sprint-1
+10,Story,HU-04 Conocer los puestos del mercado,"Como cliente, quiero ver el directorio de puestos con su número y cantidad de productos, para comprar a un comerciante en particular.
+
+Criterios de aceptación:
+Criterio 1: Dado que que hay puestos registrados, cuando abro ""Puestos"", entonces veo nombre, número de puesto y productos, y puedo ver solo sus productos.
+
+Prioridad MoSCoW: Should. Sprint planificado: 1.",High,3,1,MoSCoW-Should,Sprint-1
+11,Story,HU-05 Destacar fechas de mayor demanda,"Como cliente, quiero acceder con un clic a los productos de San Valentín, Día de la Madre y Todos los Santos, para comprar para la fecha sin buscar.
+
+Criterios de aceptación:
+Criterio 1: Dado que que elijo ""Día de la Madre"", cuando pulso la tarjeta, entonces el catálogo muestra solo productos de esa ocasión.
+
+Prioridad MoSCoW: Should. Sprint planificado: 2.",High,3,1,MoSCoW-Should,Sprint-2
+12,Story,HU-06 Agregar productos al carrito,"Como cliente, quiero agregar productos de distintos puestos a un carrito, para comprar todo en un solo pedido.
+
+Criterios de aceptación:
+Criterio 1: Dado que que un producto tiene stock, cuando lo agrego, entonces el carrito cuenta la cantidad.
+Criterio 2: Dado que que pido más unidades que el stock, cuando intento agregarlas, entonces el sistema me avisa cuántas hay.
+
+Prioridad MoSCoW: Must. Sprint planificado: 2.",Highest,5,2,MoSCoW-Must,Sprint-2
+13,Story,HU-07 Aplicar precio mayorista automático,"Como cliente, quiero que el precio mayorista se aplique al alcanzar la cantidad mínima, para pagar menos al comprar en volumen.
+
+Criterios de aceptación:
+Criterio 1: Dado que que rosas rojas son S/ 45 y S/ 36 desde 10 docenas, cuando agrego 10 docenas, entonces el total de la línea es S/ 360.
+
+Prioridad MoSCoW: Must. Sprint planificado: 2.",Highest,3,2,MoSCoW-Must,Sprint-2
+14,Story,HU-08 Confirmar el pedido validando stock,"Como cliente, quiero confirmar mi carrito y que se genere un pedido por puesto, para recibir mi compra de cada comerciante.
+
+Criterios de aceptación:
+Criterio 1: Dado que que tengo productos de 2 puestos, cuando confirmo, entonces se crean 2 pedidos y el stock se descuenta.
+Criterio 2: Dado que que otro cliente agotó el stock, cuando confirmo, entonces recibo un error 409 y mi inventario no cambia.
+
+Prioridad MoSCoW: Must. Sprint planificado: 3.",Highest,8,2,MoSCoW-Must,Sprint-3
+15,Story,HU-09 Ver mis pedidos,"Como cliente, quiero ver la lista de mis pedidos con su detalle, para dar seguimiento a mis compras.
+
+Criterios de aceptación:
+Criterio 1: Dado que que hice pedidos, cuando abro ""Mis pedidos"", entonces veo solo mis pedidos con total, pago y estado.
+
+Prioridad MoSCoW: Must. Sprint planificado: 3.",Highest,5,2,MoSCoW-Must,Sprint-3
+16,Story,HU-10 Cancelar un pedido pendiente,"Como cliente, quiero cancelar mi pedido mientras esté pendiente, para corregir un error sin perder dinero.
+
+Criterios de aceptación:
+Criterio 1: Dado que que mi pedido está pendiente, cuando lo cancelo, entonces se repone el stock y el pago queda reembolsado.
+Criterio 2: Dado que que el pedido ya está en preparación, cuando intento cancelar, entonces el sistema lo impide (409).
+
+Prioridad MoSCoW: Could. Sprint planificado: 4.",Medium,2,2,MoSCoW-Could,Sprint-4
+17,Story,HU-11 Pagar con Yape o Plin,"Como cliente, quiero pagar con mi celular Yape o Plin, para pagar sin efectivo.
+
+Criterios de aceptación:
+Criterio 1: Dado que que elijo Yape e ingreso mi celular, cuando confirmo, entonces el pago queda ""Pagado"" con una referencia de operación.
+
+Prioridad MoSCoW: Must. Sprint planificado: 3.",Highest,5,3,MoSCoW-Must,Sprint-3
+18,Story,HU-12 Pagar con tarjeta,"Como cliente, quiero pagar con tarjeta de crédito o débito, para tener otra forma de pago digital.
+
+Criterios de aceptación:
+Criterio 1: Dado que que ingreso una tarjeta válida, cuando confirmo, entonces el pago se aprueba y no se guarda el número de tarjeta.
+Criterio 2: Dado que que la tarjeta es rechazada, cuando confirmo, entonces veo el error 402 y el stock se repone.
+
+Prioridad MoSCoW: Should. Sprint planificado: 3.",High,5,3,MoSCoW-Should,Sprint-3
+19,Story,HU-13 Pagar contra entrega,"Como cliente, quiero pagar en efectivo al recibir, para comprar sin medios digitales.
+
+Criterios de aceptación:
+Criterio 1: Dado que que elijo contra entrega, cuando confirmo, entonces el pago queda pendiente hasta que se entrega el pedido.
+
+Prioridad MoSCoW: Could. Sprint planificado: 3.",Medium,2,3,MoSCoW-Could,Sprint-3
+20,Story,HU-14 Recibir confirmación del pago,"Como cliente, quiero ver una confirmación con el total y la referencia de la operación, para tener constancia de mi compra.
+
+Criterios de aceptación:
+Criterio 1: Dado que que mi pago fue aprobado, cuando termina el checkout, entonces veo la confirmación con el monto y el código de operación.
+
+Prioridad MoSCoW: Could. Sprint planificado: 3.",Medium,3,3,MoSCoW-Could,Sprint-3
+21,Story,HU-15 Elegir recojo o delivery,"Como cliente, quiero elegir recoger en el mercado o recibir en mi dirección, para recibir mis flores como me convenga.
+
+Criterios de aceptación:
+Criterio 1: Dado que que elijo delivery, cuando no ingreso distrito o dirección, entonces el sistema no me deja confirmar.
+
+Prioridad MoSCoW: Must. Sprint planificado: 2.",Highest,3,4,MoSCoW-Must,Sprint-2
+22,Story,HU-16 Conocer el costo de delivery por distrito,"Como cliente, quiero ver la tarifa y el tiempo estimado según mi distrito, para saber el total antes de pagar.
+
+Criterios de aceptación:
+Criterio 1: Dado que que elijo Miraflores, cuando veo el resumen, entonces el delivery cuesta S/ 15 por puesto y se suma al total.
+
+Prioridad MoSCoW: Must. Sprint planificado: 2.",Highest,3,4,MoSCoW-Must,Sprint-2
+23,Story,HU-17 Seguir el estado de mi pedido,"Como cliente, quiero ver la línea de tiempo del pedido (pendiente, preparando, en camino o listo, entregado), para saber cuándo llegará.
+
+Criterios de aceptación:
+Criterio 1: Dado que que el comerciante avanza el estado, cuando actualizo mis pedidos, entonces veo el nuevo estado con su hora.
+
+Prioridad MoSCoW: Should. Sprint planificado: 4.",High,5,4,MoSCoW-Should,Sprint-4
+24,Story,HU-18 Publicar mis productos,"Como comerciante, quiero registrar mi puesto y publicar productos con precio minorista y mayorista, para vender en línea.
+
+Criterios de aceptación:
+Criterio 1: Dado que que soy comerciante con puesto, cuando publico un producto, entonces aparece en el catálogo público.
+Criterio 2: Dado que que el mayorista supera al minorista, cuando intento publicar, entonces el sistema lo rechaza.
+
+Prioridad MoSCoW: Must. Sprint planificado: 4.",Highest,8,5,MoSCoW-Must,Sprint-4
+25,Story,HU-19 Actualizar precio y stock,"Como comerciante, quiero editar precio, stock y visibilidad de mis productos, para mantener el catálogo al día en fechas pico.
+
+Criterios de aceptación:
+Criterio 1: Dado que que tengo un producto mío, cuando cambio el stock, entonces el catálogo muestra el nuevo stock.
+Criterio 2: Dado que que el producto es de otro puesto, cuando intento editarlo, entonces recibo 403.
+
+Prioridad MoSCoW: Must. Sprint planificado: 4.",Highest,3,5,MoSCoW-Must,Sprint-4
+26,Story,HU-20 Gestionar los pedidos recibidos,"Como comerciante, quiero ver los pedidos de mi puesto y avanzar su estado, para atender a mis clientes ordenadamente.
+
+Criterios de aceptación:
+Criterio 1: Dado que que recibí un pedido, cuando lo marco ""Preparando"", entonces el cliente ve el cambio de estado.
+Criterio 2: Dado que que el pedido es de otro puesto, cuando intento avanzarlo, entonces recibo 403.
+
+Prioridad MoSCoW: Must. Sprint planificado: 4.",Highest,5,5,MoSCoW-Must,Sprint-4
+27,Story,HU-21 Ver el resumen de mis ventas,"Como comerciante, quiero ver cuántos pedidos, pendientes, entregados e ingresos tengo, para evaluar cómo me va.
+
+Criterios de aceptación:
+Criterio 1: Dado que que tengo pedidos, cuando abro ""Mi puesto"", entonces veo pedidos, por atender, entregados y ventas en soles.
+
+Prioridad MoSCoW: Could. Sprint planificado: 4.",Medium,5,5,MoSCoW-Could,Sprint-4
+28,Story,HU-22 Registrarme e iniciar sesión con un rol,"Como usuario, quiero crear una cuenta de cliente o de comerciante e iniciar sesión, para acceder a las funciones de mi rol.
+
+Criterios de aceptación:
+Criterio 1: Dado que que me registro como comerciante, cuando indico nombre y número de puesto, entonces se crea mi puesto y recibo una sesión de 2 horas.
+Criterio 2: Dado que que ingreso mal mi clave, cuando intento entrar, entonces veo ""Credenciales inválidas"" sin revelar si el correo existe.
+
+Prioridad MoSCoW: Must. Sprint planificado: 1.",Highest,5,6,MoSCoW-Must,Sprint-1
+29,Story,HU-23 Controlar el acceso según el rol,"Como administrador del sistema, quiero que cada endpoint exija sesión y el rol correcto, para impedir que un cliente use el panel del comerciante.
+
+Criterios de aceptación:
+Criterio 1: Dado que que soy cliente, cuando llamo al panel del comerciante, entonces recibo 403.
+Criterio 2: Dado que que no tengo sesión, cuando pido mis pedidos, entonces recibo 401.
+
+Prioridad MoSCoW: Must. Sprint planificado: 1.",Highest,3,6,MoSCoW-Must,Sprint-1
+30,Story,HU-24 Protegerme del abuso y de datos maliciosos,"Como administrador del sistema, quiero validar y sanear toda entrada y limitar las solicitudes por IP, para evitar spam, XSS e inyecciones.
+
+Criterios de aceptación:
+Criterio 1: Dado que que envío texto con <script>, cuando guardo un producto, entonces las etiquetas se neutralizan.
+Criterio 2: Dado que que hago más de 10 intentos de login por minuto, cuando sigo intentando, entonces recibo 429.
+
+Prioridad MoSCoW: Should. Sprint planificado: 1.",High,3,6,MoSCoW-Should,Sprint-1

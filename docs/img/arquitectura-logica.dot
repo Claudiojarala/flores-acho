@@ -1,0 +1,47 @@
+digraph G {
+  rankdir=TB; compound=true; nodesep=0.35; ranksep=0.55; fontname="Helvetica";
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#475569", fillcolor="white"];
+  edge [fontname="Helvetica", fontsize=9, color="#475569"];
+
+  user [label="Cliente / Comerciante\n(navegador web)", shape=oval, fillcolor="#fff1f2", color="#be123c"];
+
+  subgraph cluster_pres { label="1. Capa de Presentación (Next.js · React · Tailwind · shadcn/ui)"; style="rounded,filled"; fillcolor="#fff1f2"; color="#be123c"; fontsize=12;
+    ui [label="Interfaz web\nCatálogo · Puestos · Carrito\nMis pedidos · Mi puesto · /login"];
+    hooks [label="Hooks de estado\nuse-cart · use-session · use-store-data"];
+    capi [label="client-api.ts\n(fetch + JWT en Authorization)"];
+  }
+  subgraph cluster_api { label="2. Capa de API (Route Handlers · controladores delgados)"; style="rounded,filled"; fillcolor="#f5f3ff"; color="#7c3aed"; fontsize=12;
+    sec [label="Middleware de seguridad\nrate limit · requireAuth · requireRole\nvalidación Zod · sanitizeText · CSP"];
+    routes [label="/api/auth · /api/products · /api/stalls\n/api/delivery-zones · /api/orders\n/api/merchant/* · /api/health"];
+  }
+  subgraph cluster_bus { label="3. Capa de Negocio (src/services + src/lib/domain)"; style="rounded,filled"; fillcolor="#ecfdf5"; color="#059669"; fontsize=12;
+    s_auth [label="auth.service\nregistro · login · JWT"];
+    s_cat [label="catalog.service\nbúsqueda · filtros"];
+    s_ord [label="order.service\ncheckout · estados · cancelación"];
+    s_mer [label="merchant.service\nproductos · resumen"];
+    s_pay [label="payment.service\n(interfaz PaymentGateway)"];
+    dom [label="Reglas de dominio\nprecio mayorista · tarifa por distrito\nmáquina de estados · Luhn"];
+  }
+  subgraph cluster_data { label="4. Capa de Persistencia (patrón Repository)"; style="rounded,filled"; fillcolor="#fffbeb"; color="#d97706"; fontsize=12;
+    repo [label="Repository (interfaz)"];
+    mem [label="MemoryRepository\n(desarrollo y pruebas)"];
+    pg [label="PostgresRepository\n(SQL parametrizado)"];
+  }
+  subgraph cluster_infra { label="5. Datos y servicios externos"; style="rounded,filled"; fillcolor="#f1f5f9"; color="#475569"; fontsize=12;
+    db [label="PostgreSQL (Supabase)\nusers · stalls · products · orders\nRLS activado", shape=cylinder, fillcolor="#fef3c7"];
+    gw [label="Pasarela de pago\nSimulada hoy · Culqi / Niubiz\nYape / Plin a futuro", fillcolor="#e0f2fe", color="#0891b2"];
+    vercel [label="Vercel\nhosting + HTTPS + CDN", fillcolor="#e0f2fe", color="#0891b2"];
+  }
+
+  user -> ui [label="HTTPS"];
+  ui -> hooks; hooks -> capi;
+  capi -> sec [label="JSON/REST + JWT"];
+  sec -> routes;
+  routes -> s_auth; routes -> s_cat; routes -> s_ord; routes -> s_mer;
+  s_ord -> s_pay; s_ord -> dom; s_cat -> dom; s_mer -> dom;
+  s_auth -> repo; s_cat -> repo; s_ord -> repo; s_mer -> repo;
+  repo -> mem [style=dashed, label="sin DATABASE_URL"]; repo -> pg [label="DATABASE_URL"];
+  pg -> db [label="SQL / TLS"];
+  s_pay -> gw [label="cobro (simulado)", style=dashed];
+  vercel -> ui [style=dotted, arrowhead=none, label="aloja"];
+}

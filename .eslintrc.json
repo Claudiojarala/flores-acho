@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "plugin:security/recommended-legacy"
+  ],
+  "rules": {
+    "react/no-danger": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "security/detect-object-injection": "off"
+  },
+  "ignorePatterns": [
+    ".next/",
+    "node_modules/",
+    "coverage/",
+    "next-env.d.ts"
+  ]
+}
