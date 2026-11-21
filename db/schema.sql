@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS products (
   wholesale_min_qty integer NOT NULL CHECK (wholesale_min_qty >= 2),
   stock             integer NOT NULL CHECK (stock >= 0),
   active            boolean NOT NULL DEFAULT true,
+  image_url         text,
   CHECK (price_wholesale <= price_retail)
 );
 CREATE INDEX IF NOT EXISTS products_stall_idx ON products (stall_id);

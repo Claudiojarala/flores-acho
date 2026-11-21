@@ -32,6 +32,8 @@ export interface Product {
   wholesaleMinQty: number;
   stock: number;
   active: boolean;
+  /** Foto del producto como data URL (JPEG/PNG/WebP reducida en el navegador); null = sin foto. */
+  imageUrl: string | null;
 }
 
 export type PaymentMethod = 'yape' | 'plin' | 'tarjeta' | 'contraentrega';

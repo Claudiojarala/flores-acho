@@ -321,6 +321,19 @@ describe('HU-18 / HU-19 / HU-21: panel del comerciante', () => {
     expect(products).toHaveLength(1);
   });
 
+  it('publica un producto con foto (data URL) y la devuelve en el catálogo; rechaza formatos no permitidos', async () => {
+    const merchant = await registerComerciante('foto@correo.com', 'C-50');
+    const foto = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/';
+    const ok = await merchantProductPOST(req('/api/merchant/products', 'POST', { ...nuevo, name: 'Rosas con foto', imageUrl: foto }, merchant));
+    expect(ok.status).toBe(201);
+    const { products } = await (await productsGET(req('/api/products?q=con%20foto'))).json();
+    expect(products[0].imageUrl).toBe(foto);
+    const svg = await merchantProductPOST(req('/api/merchant/products', 'POST', { ...nuevo, name: 'Con svg', imageUrl: 'data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=' }, merchant));
+    expect(svg.status).toBe(400);
+    const ext = await merchantProductPOST(req('/api/merchant/products', 'POST', { ...nuevo, name: 'Con url', imageUrl: 'javascript:alert(1)' }, merchant));
+    expect(ext.status).toBe(400);
+  });
+
   it('un cliente no puede publicar productos (403)', async () => {
     const cliente = await registerCliente('ana@correo.com');
     expect((await merchantProductPOST(req('/api/merchant/products', 'POST', nuevo, cliente))).status).toBe(403);

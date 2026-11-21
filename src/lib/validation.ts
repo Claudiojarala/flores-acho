@@ -10,6 +10,11 @@ const text = (min: number, max: number) =>
 const id = z.string().min(1).max(64).regex(/^[0-9a-zA-Z-]+$/, 'Identificador inválido');
 const phone = z.string().regex(/^9\d{8}$/, 'Celular de 9 dígitos que empiece con 9');
 const money = z.number().min(0.1).max(10000);
+/** Foto del producto: solo data URL de imagen raster (sin SVG ni URLs externas) y de tamaño acotado. */
+const imageData = z
+  .string()
+  .max(250_000, 'La foto es demasiado grande')
+  .regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/, 'Formato de foto no permitido (usa JPG, PNG o WebP)');
 
 /* ───────── Cuentas (HU-22) ───────── */
 export const registerSchema = z
@@ -64,6 +69,7 @@ export const productCreateSchema = z
     priceWholesale: money,
     wholesaleMinQty: z.number().int().min(2).max(1000),
     stock: z.number().int().min(0).max(100000),
+    imageUrl: imageData.nullish().transform((v) => v ?? null),
   })
   .refine((p) => p.priceWholesale <= p.priceRetail, { path: ['priceWholesale'], message: 'El precio mayorista no puede superar al minorista' });
 

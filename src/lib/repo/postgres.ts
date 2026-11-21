@@ -36,8 +36,13 @@ export class PostgresRepository implements Repository {
   }
 
   private init(): Promise<void> {
-    this.ready ??= this.seed();
+    this.ready ??= this.migrate().then(() => this.seed());
     return this.ready;
+  }
+
+  /** Migración idempotente: agrega la columna de foto si la base fue creada antes de esta función. */
+  private async migrate(): Promise<void> {
+    await this.pool.query('ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url text');
   }
 
   private async seed(): Promise<void> {
@@ -82,6 +87,7 @@ export class PostgresRepository implements Repository {
       wholesaleMinQty: Number(r.wholesale_min_qty),
       stock: Number(r.stock),
       active: Boolean(r.active),
+      imageUrl: r.image_url ? String(r.image_url) : null,
     };
   }
 
@@ -169,9 +175,9 @@ export class PostgresRepository implements Repository {
 
   async createProduct(d: NewProduct): Promise<Product> {
     const rows = await this.q(
-      `INSERT INTO products (stall_id, name, category, occasions, description, unit, price_retail, price_wholesale, wholesale_min_qty, stock)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
-      [d.stallId, d.name, d.category, d.occasions, d.description, d.unit, d.priceRetail, d.priceWholesale, d.wholesaleMinQty, d.stock],
+      `INSERT INTO products (stall_id, name, category, occasions, description, unit, price_retail, price_wholesale, wholesale_min_qty, stock, image_url)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [d.stallId, d.name, d.category, d.occasions, d.description, d.unit, d.priceRetail, d.priceWholesale, d.wholesaleMinQty, d.stock, d.imageUrl ?? null],
     );
     return this.toProduct(rows[0]);
   }

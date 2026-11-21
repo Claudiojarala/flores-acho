@@ -25,7 +25,7 @@ export class MemoryRepository implements Repository {
   constructor(options: { seed?: boolean } = {}) {
     if (options.seed) {
       for (const s of SEED_STALLS) this.stalls.set(s.id, { ...s, ownerId: null });
-      for (const p of SEED_PRODUCTS) this.products.set(p.id, { ...p, active: true });
+      for (const p of SEED_PRODUCTS) this.products.set(p.id, { ...p, active: true, imageUrl: null });
     }
   }
 
@@ -77,7 +77,7 @@ export class MemoryRepository implements Repository {
   }
 
   async createProduct(data: NewProduct): Promise<Product> {
-    const product: Product = { ...data, id: randomUUID(), active: true };
+    const product: Product = { ...data, imageUrl: data.imageUrl ?? null, id: randomUUID(), active: true };
     this.products.set(product.id, product);
     return product;
   }

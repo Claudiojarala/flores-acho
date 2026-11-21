@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Banknote, ClipboardList, LoaderCircle, PackageCheck, Plus, Save, Store } from 'lucide-react';
+import { Banknote, ClipboardList, ImagePlus, LoaderCircle, PackageCheck, Plus, Save, Store } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,9 +12,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { CATEGORIES, CATEGORY_LABEL, OCCASIONS, OCCASION_LABEL, UNITS, type Category, type Occasion, type Unit } from '@/lib/data/catalog';
 import { money } from '@/lib/format';
+import { fileToDataUrl } from '@/lib/image-resize';
 import type { Product } from '@/lib/repo/types';
 import type { MerchantData, OrderView } from '@/lib/ui-types';
 import { OrdersView } from './orders-view';
+import { ProductImage } from './product-card';
 
 const selectCls = 'flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
@@ -28,9 +30,10 @@ export interface NewProductForm {
   priceWholesale: number;
   wholesaleMinQty: number;
   stock: number;
+  imageUrl: string | null;
 }
 
-const EMPTY: NewProductForm = { name: '', category: 'rosas', occasions: [], description: '', unit: 'docena', priceRetail: 40, priceWholesale: 32, wholesaleMinQty: 10, stock: 20 };
+const EMPTY: NewProductForm = { name: '', category: 'rosas', occasions: [], description: '', unit: 'docena', priceRetail: 40, priceWholesale: 32, wholesaleMinQty: 10, stock: 20, imageUrl: null };
 
 function Stat({ icon: Icon, label, value }: { icon: typeof Store; label: string; value: string }) {
   return (
@@ -52,8 +55,13 @@ function ProductRow({ p, busy, onSave }: { p: Product; busy: boolean; onSave: (i
   return (
     <tr className="border-t border-slate-100 align-middle">
       <td className="py-2 pr-3">
-        <p className="font-medium text-slate-900">{p.name}</p>
-        <p className="text-xs text-slate-600">{CATEGORY_LABEL[p.category]} · por {p.unit}</p>
+        <div className="flex items-center gap-3">
+          <ProductImage product={p} className="h-12 w-12 shrink-0 rounded-md" />
+          <div>
+            <p className="font-medium text-slate-900">{p.name}</p>
+            <p className="text-xs text-slate-600">{CATEGORY_LABEL[p.category]} · por {p.unit}</p>
+          </div>
+        </div>
       </td>
       <td className="py-2 pr-2"><Input aria-label={`Precio minorista de ${p.name}`} type="number" min={0.1} step="any" className="h-9 w-24" value={retail} onChange={(e) => setRetail(e.target.value)} /></td>
       <td className="py-2 pr-2"><Input aria-label={`Precio mayorista de ${p.name}`} type="number" min={0.1} step="any" className="h-9 w-24" value={wholesale} onChange={(e) => setWholesale(e.target.value)} /></td>
@@ -88,6 +96,7 @@ export function MerchantPanel({ data, orders, loading, busyId, onSaveProduct, on
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<NewProductForm>(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [photoError, setPhotoError] = useState('');
 
   if (!data) return <div className="space-y-3"><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-64 rounded-xl" /></div>;
 
@@ -99,6 +108,18 @@ export function MerchantPanel({ data, orders, loading, busyId, onSaveProduct, on
     if (ok) {
       setForm(EMPTY);
       setOpen(false);
+    }
+  };
+  const onPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setPhotoError('');
+      setForm((f) => ({ ...f, imageUrl: null }));
+      const url = await fileToDataUrl(file);
+      setForm((f) => ({ ...f, imageUrl: url }));
+    } catch (err) {
+      setPhotoError(err instanceof Error ? err.message : 'No se pudo cargar la foto');
     }
   };
   const toggleOccasion = (o: Occasion) => setForm((f) => ({ ...f, occasions: f.occasions.includes(o) ? f.occasions.filter((x) => x !== o) : [...f.occasions, o] }));
@@ -174,6 +195,15 @@ export function MerchantPanel({ data, orders, loading, busyId, onSaveProduct, on
             <div className="space-y-1.5">
               <Label htmlFor="np-desc">Descripción</Label>
               <Textarea id="np-desc" rows={2} maxLength={200} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="np-photo" className="flex items-center gap-1.5"><ImagePlus className="h-4 w-4" aria-hidden /> Foto del producto (opcional)</Label>
+              <Input id="np-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhoto} />
+              {photoError && <p role="alert" className="text-xs text-red-700">{photoError}</p>}
+              {form.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={form.imageUrl} alt="Vista previa de la foto" className="h-32 w-full rounded-md object-cover" />
+              )}
             </div>
             <fieldset className="space-y-1.5">
               <legend className="text-sm font-medium">Ocasiones</legend>
