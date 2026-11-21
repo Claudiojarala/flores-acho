@@ -1,0 +1,130 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [test, main]
+  pull_request:
+    branches: [test, main]
+
+# Mínimo privilegio: el pipeline solo puede leer el repositorio.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  # ── Fase Code/Build (pre-build): análisis estático y calidad ────────────────
+  sast-lint:
+    name: SAST + Lint + Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: ESLint (reglas de seguridad eslint-plugin-security)
+        run: npm run lint
+      - name: TypeScript (tipado estricto)
+        run: npm run typecheck
+
+  # ── SCA: análisis de dependencias (CVEs altos/críticos bloquean el pipeline) ─
+  dependency-audit:
+    name: SCA (npm audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Auditar dependencias
+        run: npm audit --audit-level=high
+
+  # ── Escaneo de secretos en todo el historial de git ─────────────────────────
+  secret-scan:
+    name: Escaneo de secretos (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── Build ───────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    needs: [sast-lint, dependency-audit, secret-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+  # ── Test (post-build): unitarios + integración de la API ────────────────────
+  test:
+    name: Tests (Vitest)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Ejecutar pruebas con cobertura
+        run: |
+          set -o pipefail
+          npm run test:coverage | tee test-report.txt
+      - name: Resumen visible en la ejecución
+        if: always()
+        run: |
+          echo '### Resultados de pruebas (Vitest)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -n 40 test-report.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report
+          path: test-report.txt
+
+  # ── Deploy: solo desde main, después de que todo lo anterior pasó ───────────
+  deploy:
+    name: Deploy a Vercel
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Aviso si faltan secretos de Vercel
+        if: env.VERCEL_TOKEN == ''
+        run: echo "::warning::VERCEL_TOKEN no configurado; se omite el deploy por CLI (puede usarse la integración Git de Vercel)."
+      - name: Desplegar a producción
+        if: env.VERCEL_TOKEN != ''
+        run: |
+          npx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel@latest build --prod --token="$VERCEL_TOKEN"
+          npx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
