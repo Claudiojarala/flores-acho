@@ -28,7 +28,11 @@ export class PostgresRepository implements Repository {
   private ready: Promise<void> | null = null;
 
   constructor(connectionString: string, caPem?: string) {
-    this.pool = new Pool({ connectionString, max: 3, ssl: caPem ? { ca: caPem } : true });
+    // TLS siempre activo. Con DATABASE_CA se valida el certificado del proveedor (recomendado).
+    // El pooler de Supabase usa una CA propia: si no se aporta, DATABASE_SSL_NO_VERIFY=true cifra la
+    // conexión pero no verifica el certificado (limitación documentada en el README).
+    const ssl = caPem ? { ca: caPem } : process.env.DATABASE_SSL_NO_VERIFY === 'true' ? { rejectUnauthorized: false } : true;
+    this.pool = new Pool({ connectionString, max: 3, ssl });
   }
 
   private init(): Promise<void> {
